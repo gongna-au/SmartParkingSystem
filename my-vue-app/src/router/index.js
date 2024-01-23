@@ -2,7 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LogIn from '../components/LogIn.vue';
 import SignUp from '../components/SignUp.vue';
-
+import DashboardShow from '../components/DashboardShow.vue';
 const routes = [
   {
     path: '/login',
@@ -13,6 +13,11 @@ const routes = [
     path: '/signup',
     name: 'SignUp',
     component: SignUp
+  },
+  {
+    path: '/dashboard',
+    name: 'DashboardShow',
+    component: DashboardShow
   },
   // ...其他路由...
 ];

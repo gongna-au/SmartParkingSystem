@@ -40,6 +40,7 @@ export default {
             });
           // 登录成功处理
           console.log("Login success:", data);
+          this.$router.push('/dashboard');
           // 这里可以添加跳转到主页或其他页面的代码
         } else {
           this.$swal({
