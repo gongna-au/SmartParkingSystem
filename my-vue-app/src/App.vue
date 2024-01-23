@@ -26,7 +26,7 @@ body, html {
 
 #app {
   height: 100%;
-  background: url('./images/index.png') no-repeat center center fixed; 
+  background: url('./images/park.png') no-repeat center center fixed; 
   background-size: cover;
 }
 
