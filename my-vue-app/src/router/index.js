@@ -1,13 +1,16 @@
 // router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
+
 import LogIn from '../components/LogIn.vue';
+import PayMent from '../components/PayMent.vue'
 import SignUp from '../components/SignUp.vue';
 import DashBoard from '../components/DashBoard.vue';
 import ReserVation from '../components/ReserVation.vue';
 import AccountManagement from '../components/AccountManagement.vue';
-import PayMent from '../components/PayMent.vue'
 import FaceRecognition from '../components/FaceRecognition.vue'
 import NavigationManager from   '../components/NavigationManager.vue'
+import UserCenter from '../components/UserCenter.vue'; // 添加这行导入用户中心组件
+
 const routes = [
   {
     path: '/login',
@@ -48,9 +51,14 @@ const routes = [
     path: '/navigation',
     name: 'Navigation',
     component: NavigationManager
+  },
+  // 添加用户中心路由配置
+  {
+    path: '/user-center',
+    name: 'UserCenter',
+    component: UserCenter
   }
 
-  // ...其他路由...
 ];
 
 const router = createRouter({

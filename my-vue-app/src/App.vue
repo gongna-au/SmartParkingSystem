@@ -3,8 +3,11 @@
     <nav class="navbar">
       <div class="logo">智慧停车系统</div>
       <div class="nav-links">
-        <router-link to="/login" class="nav-item">登录</router-link>
-        <router-link to="/signup" class="nav-item">注册</router-link>
+        <!-- 使用v-if和v-else指令根据isLoggedIn的值动态显示内容 -->
+        <router-link to="/login" v-if="!isLoggedIn" class="nav-item">登录</router-link>
+        <router-link to="/signup" v-if="!isLoggedIn" class="nav-item">注册</router-link>
+        <!-- 假设有个路由是用户的个人中心或登出按钮 -->
+        <router-link to="/user-center" v-else class="nav-item">个人中心</router-link>
         <!-- 更多导航项 -->
       </div>
     </nav>
@@ -13,8 +16,15 @@
 </template>
 
 <script>
-// 无需特定脚本
+export default {
+  computed: {
+    isLoggedIn() {
+      return this.$store.state.isLoggedIn;
+    },
+  },
+};
 </script>
+
 
 <style>
 body, html {

@@ -59,7 +59,7 @@
   };
   </script>
   
-  <style>
+  <style scoped>
   #sign-up {
     display: flex;
     justify-content: center;

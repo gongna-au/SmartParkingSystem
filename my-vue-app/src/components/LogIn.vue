@@ -40,6 +40,9 @@ export default {
             });
           // 登录成功处理
           console.log("Login success:", data);
+          // 更新Vuex中的登录状态
+          this.$store.commit('setLoggedIn', true);
+
           this.$router.push('/dashboard');
           // 这里可以添加跳转到主页或其他页面的代码
         } else {
@@ -63,7 +66,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #log-in {
   display: flex;
   justify-content: center;
