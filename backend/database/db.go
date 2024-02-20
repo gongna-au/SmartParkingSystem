@@ -134,7 +134,7 @@ func (l GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (strin
 	if err != nil {
 		// 记录未找到的错误使用 warning 等级
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			l.logger().Warn("Database ErrRecordNotFound", logFields...)
+			l.logger().Debug("RecordNotFound", logFields...)
 		} else {
 			// 其他错误使用 error 等级
 			logFields = append(logFields, zap.Error(err))
