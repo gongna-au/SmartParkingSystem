@@ -3,7 +3,9 @@ package router
 import (
 	"backend/handler/action"
 	"backend/handler/login"
+	"backend/handler/parking"
 	"backend/handler/recommend"
+	"backend/handler/user"
 	"net/http"
 	"strings"
 
@@ -94,6 +96,20 @@ func RegisterAPIRoutes(g *gin.Engine) {
 		g4.POST("/click", action.UpdateUserClick)
 		g4.POST("/save", action.UpdateUserSave)
 		g4.POST("/search", action.UpdateUserSearch)
+	}
+	g5 := g.Group("/api/v1/parking")
+	{
+		g5.POST("/search", parking.SearchParkingLotsByLocation)
+		g5.GET("/history", parking.SearchHistoryByUserID)
+		g5.GET("/reserve", parking.SearchReserveByUserID)
+		g5.GET("/cancel", parking.CancelReserveByID)
+	}
+
+	// http://localhost:8083/api/parking/search
+	g6 := g.Group("/api/v1/user")
+	{
+		g6.POST("/card", user.AddNewCard)
+		g6.GET("/cards", user.GetBoundedCard)
 	}
 
 }
