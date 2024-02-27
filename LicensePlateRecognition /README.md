@@ -44,6 +44,10 @@ source myenv/bin/activate
 python3.11 -m pip install --upgrade pip
 ```
 
+```shell
+python3 app.py
+```
+
 ## 安装环境
 
 假设我们已经完成了前两步（定位文本区域和分割字符），现在需要实现第三步，字符识别。这里，使用一个预训练的模型来完成这个任务，如使用Tesseract OCR，一个开源的光学字符识别库。
@@ -89,3 +93,37 @@ pip3 install pytesseract
 ```shell
 which tesseract
 ```
+
+
+## 代码优化
+
+配置
+Configuration Item	Options
+🌐 Language	Python
+📚 Project Type	General Purpose
+🛠️ Code Structure	Modular
+🚫 Error Handling Strategy	Robust
+⚡ Performance Optimization Level	Medium
+修改和增强步骤
+增强图像预处理:
+
+在imreadex函数之后，增加图像预处理步骤，比如对图像进行灰度化、二值化处理，以及使用高斯模糊来减少噪声。
+车牌区域定位:
+
+代码中已经包含了车牌区域定位的逻辑。可以通过调整参数或增加更多的图像处理步骤来提高车牌定位的准确性。比如，增加对车牌倾斜校正的处理。
+字符分割:
+
+在seperate_card函数中，增加更精细的逻辑来处理字符之间的间距，确保字符能够正确分割，特别是对于不同尺寸和字体的车牌。
+字符识别:
+
+使用SVM训练模型进行字符识别。需要有一个足够大的字符数据集来训练模型，以识别不同字体和风格的字符。可以考虑使用深度学习方法，如卷积神经网络(CNN)，来提高识别准确率，这需要修改train_svm函数以及增加相应的深度学习模型训练代码。
+整合深度学习模型:
+
+如果使用深度学习方法，需要添加模型训练和预测的代码。这可能包括定义模型结构、加载预训练模型、进行模型训练和预测。
+错误处理和优化:
+
+在整个流程中，添加错误处理逻辑，确保代码在处理不同的输入时具有鲁棒性。
+对代码进行性能优化，确保车牌识别过程尽可能快速。
+
+
+
