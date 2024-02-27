@@ -82,3 +82,10 @@ pip3 install pytesseract
 字符识别：对每个字符进行识别。这通常通过使用训练有素的机器学习模型来完成，例如支持向量机(SVM)、卷积神经网络(CNN)或其他图像识别算法。
 
 
+
+
+## 代码修改
+
+```shell
+which tesseract
+```
