@@ -18,6 +18,7 @@
     },
     methods: {
       async signup() {
+        console.log(this.phone, this.password); // 添加这行代码来检查值
         try {
           const response = await fetch(
             "http://localhost:8083/api/v1/sign/common",
