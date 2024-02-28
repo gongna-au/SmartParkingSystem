@@ -163,14 +163,19 @@ func fmtDuration(d time.Duration) string {
 }
 
 type ParkingReservationModel struct {
-	ID            int       `json:"id"`
-	UserID        int       `json:"user_id"`
-	ParkingLotID  int       `json:"parking_lot_id"`
-	StartTime     time.Time `json:"start_time"`
-	EndTime       time.Time `json:"end_time"`
-	BankCardID    int       `json:"bank_card_id"`   // 用户用于支付的银行卡ID
-	PaymentAmount float64   `json:"payment_amount"` // 支付的金额
+	ID            int       `json:"id" gorm:"column:id;" binding:"required"`
+	UserID        int       `json:"user_id" gorm:"column:user_id;" binding:"required"`
+	ParkingLotID  int       `json:"parking_lot_id" gorm:"column:parking_lot_id;" binding:"required"`
+	VehicleNumber string    `json:"vehicle_number" gorm:"column:vehicle_number;" binding:"required"`
+	StartTime     time.Time `json:"start_time" gorm:"column:start_time;" binding:"required"`
+	EndTime       time.Time `json:"end_time" gorm:"column:end_time;" binding:"required"`
+	BankCardID    int       `json:"bank_card_id" gorm:"column:bank_card_id;" binding:"required"`     // 用户用于支付的银行卡ID
+	PaymentAmount float64   `json:"payment_amount" gorm:"column:payment_amount;" binding:"required"` // 支付的金额
 	// 可以根据需要添加更多字段，比如停车场名称等
+}
+
+func (c *ParkingReservationModel) TableName() string {
+	return "bank_cards_bound"
 }
 
 // 假设的ParkingReservationModel，现在包括了所有需要的信息
