@@ -38,8 +38,8 @@ def main(image_path):
     recognized_texts = []
     for plate_area in plates:
         binary_plate = preprocess_for_ocr(img, plate_area)
-        # 使用改进的Tesseract配置
-        text = pytesseract.image_to_string(binary_plate, config='--psm 8')  # 尝试不同的PSM模式
+        config = '--psm 8 -l chi_sim --tessdata-dir /opt/homebrew/share/tessdata'  # 对于简体中文
+        text = pytesseract.image_to_string(binary_plate, config=config)
         recognized_texts.append(text.strip())
 
     # 删除重复值和空字符串
@@ -48,5 +48,5 @@ def main(image_path):
         print("Recognized text:", text)
 
 if __name__ == "__main__":
-    image_path = "test1.png"
+    image_path = "test5.png"
     main(image_path)

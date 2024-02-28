@@ -127,3 +127,59 @@ Configuration Item	Options
 
 
 
+
+
+## 训练
+
+```shell
+pip install tensorflow opencv-python pytesseract
+```
+
+
+## 问题
+
+如果代码无法正确识别中文字符，可能是因为在调用pytesseract.image_to_string时没有指定正确的语言参数，或者是Tesseract的中文语言包没有被正确安装或配置。要解决这个问题，可以按照以下步骤操作：
+
+#### 确认Tesseract安装了中文语言包
+首先，确保的Tesseract安装包括了简体中文的语言支持。在命令行中运行以下命令来列出Tesseract支持的所有语言：
+
+```bash    
+tesseract --list-langs
+```
+在输出中应该包含chi_sim表示简体中文支持。如果没有，需要安装相应的语言包。
+
+
+#### 在代码中指定中文语言
+在调用pytesseract.image_to_string函数时，通过lang参数指定使用简体中文语言包：
+
+```python
+text = pytesseract.image_to_string(binary_plate, lang='chi_sim', config='--psm 8')
+```
+   
+#### 调整Tesseract配置
+
+为了提高中文识别的准确率，可以尝试调整Tesseract的配置。--psm参数指定页面分割模式，对于车牌这种单行文本，--psm 7或--psm 8通常是比较合适的选择。另外，--oem参数可以用来指定OCR引擎模式，其中--oem 1为神经网络LSTM引擎。
+
+因此，可以尝试调整调用image_to_string的方式如下：
+
+```python
+text = pytesseract.image_to_string(binary_plate, lang='chi_sim', config='--psm 8 --oem 1')
+```
+
+#### 优化图像预处理
+图像预处理对OCR的准确率有很大影响。已经在代码中使用了一些预处理步骤，如灰度化、自适应阈值等。针对中文字符，可能需要进一步优化这些步骤，比如调整阈值方法或尝试其他图像增强技术，以提高字符的可辨识度。
+
+#### 确保Tesseract的路径正确
+如果在系统中安装了Tesseract，确保pytesseract能够正确找到Tesseract的可执行文件。如果必要的话，可以通过pytesseract.pytesseract.tesseract_cmd属性来手动指定Tesseract的路径：
+
+
+按照以上步骤，应该能够提高代码对中文字符的识别能力。如果仍然遇到问题，可能需要进一步检查安装的Tesseract版本是否支持需要的特性，或者尝试不同的图像预处理方法来优化输入图像。
+
+```shell
+tesseract --list-langs
+```
+
+```shell
+cd /opt/homebrew/share/tessdata/
+curl -L -o chi_sim.traineddata https://github.com/tesseract-ocr/tessdata_fast/raw/master/chi_sim.traineddata
+```
