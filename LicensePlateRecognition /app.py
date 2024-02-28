@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
 import pytesseract
+from PIL import Image, ImageEnhance, ImageFilter
+import cv2
+import numpy as np
+import pytesseract
 
 def imreadex(filename):
     return cv2.imdecode(np.fromfile(filename, dtype=np.uint8), cv2.IMREAD_COLOR)
@@ -25,10 +29,24 @@ def find_plate_area(img):
 def preprocess_for_ocr(img, plate_area):
     x, y, w, h = plate_area
     plate_img = img[y:y+h, x:x+w]
-    gray_plate = cv2.cvtColor(plate_img, cv2.COLOR_BGR2GRAY)
+    
+    # 将OpenCV图像转换为Pillow图像
+    plate_img_pil = Image.fromarray(cv2.cvtColor(plate_img, cv2.COLOR_BGR2RGB))
+    
+    # 使用Pillow进行图像增强
+    enhancer = ImageEnhance.Contrast(plate_img_pil)  # 对比度增强
+    plate_img_enhanced = enhancer.enhance(2)  # 对比度增强因子
+    
+    enhancer = ImageEnhance.Sharpness(plate_img_enhanced)  # 锐化增强
+    plate_img_sharpened = enhancer.enhance(2)  # 锐化增强因子
+    
+    # 将增强后的Pillow图像转换回OpenCV图像
+    plate_img_enhanced_cv = cv2.cvtColor(np.array(plate_img_sharpened), cv2.COLOR_RGB2BGR)
+    gray_plate = cv2.cvtColor(plate_img_enhanced_cv, cv2.COLOR_BGR2GRAY)
+    
     # 使用自适应阈值而不是全局阈值
-    binary_plate = cv2.adaptiveThreshold(gray_plate,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
-                cv2.THRESH_BINARY,11,2)
+    binary_plate = cv2.adaptiveThreshold(gray_plate, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                         cv2.THRESH_BINARY, 11, 2)
     return binary_plate
 
 def main(image_path):
@@ -38,7 +56,7 @@ def main(image_path):
     recognized_texts = []
     for plate_area in plates:
         binary_plate = preprocess_for_ocr(img, plate_area)
-        config = '--psm 8 -l chi_sim --tessdata-dir /opt/homebrew/share/tessdata'  # 对于简体中文
+        config = '--psm 8 -l eng+chi_sim --tessdata-dir /opt/homebrew/share/tessdata'  # 对于简体中文
         text = pytesseract.image_to_string(binary_plate, config=config)
         recognized_texts.append(text.strip())
 
