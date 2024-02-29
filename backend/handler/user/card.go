@@ -1,11 +1,12 @@
 package user
 
 import (
+	"backend/model"
 	"backend/model/requests"
-	"fmt"
-	"strconv"
-
 	"backend/model/response"
+	"fmt"
+
+	"strconv"
 
 	"backend/model/user"
 
@@ -75,4 +76,61 @@ func GetBoundedCard(c *gin.Context) {
 	}
 
 	response.JSON(c, boundedCards) // 使用你的响应工具返回数据
+}
+
+func GetUserName(c *gin.Context) {
+	userID, _ := strconv.Atoi(c.Query("userId")) // 从查询参数中获取用户ID
+	userModel := user.CommonUserModel{
+		BaseModel: model.BaseModel{ID: userID},
+	}
+	user, err := userModel.GetName()
+	if err != nil {
+		response.Error(c, err, "用户名错误")
+		return
+	}
+
+	response.JSON(c, user) // 使用你的响应工具返回数据
+}
+
+func UpdatePassword(c *gin.Context) {
+	request := &requests.UpdatePasswordRequest{}
+	// 2. 绑定
+	if err := c.Bind(request); err != nil {
+		response.Abort500(c, "绑定参数失败")
+		return
+	}
+	userID, _ := strconv.Atoi(request.UserID) // 从查询参数中获取用户ID
+	userModel := user.CommonUserModel{
+		BaseModel: model.BaseModel{ID: userID},
+	}
+	user, err := userModel.Get()
+	if err != nil {
+		response.Error(c, err, "获取用户失败")
+		return
+	}
+	if user != nil && user.Password == request.OldPassword {
+		user.Password = request.NewPassword
+		err := user.Update()
+		if err != nil {
+			response.Abort500(c, "更新失败")
+		} else {
+			response.JSON(c, "更新成功")
+		}
+		return
+	}
+	response.Abort500(c, "更新失败")
+}
+
+func GetUser(c *gin.Context) {
+	userID, _ := strconv.Atoi(c.Query("userId")) // 从查询参数中获取用户ID
+	userModel := user.CommonUserModel{
+		BaseModel: model.BaseModel{ID: userID},
+	}
+	name, err := userModel.Get()
+	if err != nil {
+		response.Error(c, err, "用户名错误")
+		return
+	}
+
+	response.JSON(c, name) // 使用你的响应工具返回数据
 }

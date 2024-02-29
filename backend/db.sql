@@ -7,31 +7,37 @@ use  `backend`;
 -- 创建用户表
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `phone` varchar(50) NOT NULL,
+  `phone` varchar(50) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `phone` (`phone`)
+  `name` varchar(255) DEFAULT NULL,
+  `overage` int(11) DEFAULT 0,
+  `email` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `postal_code` varchar(20) DEFAULT NULL,
+  `about_me` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `users` (`phone`, `password`) VALUES 
-('12378978963', 'mypassword'),
-('12378978961', 'mypassword'),
-('12378978962', 'mypassword'),
-('12378978964', 'mypassword'),
-('12378978965', 'mypassword'),
-('12378978966', 'mypassword'),
-('12378978967', 'mypassword'),
-('12378978968', 'mypassword'),
-('12378978969', 'mypassword'),
-('12378978970', 'mypassword'),
-('12378978971', 'mypassword'),
-('12378978972', 'mypassword'),
-('12378978973', 'mypassword'),
-('12378978974', 'mypassword'),
-('12378978977', 'mypassword'),
-('15002597117', '123'),
-('12378978975', 'mypassword');
 
+INSERT INTO `users` (`phone`, `password`, `name`, `overage`, `email`, `address`, `city`, `country`, `postal_code`, `about_me`) VALUES
+('12345678901', 'securePass1', 'Alice Johnson', 100, 'alice@example.com', '1234 Elm Street', 'Springfield', 'USA', '12345', 'Enthusiastic software engineer.'),
+('12345678902', 'securePass2', 'Bob Smith', 200, 'bob@example.com', '2345 Maple Avenue', 'Lincoln', 'USA', '23456', 'Dedicated project manager.'),
+('12345678903', 'securePass3', 'Carol White', 300, 'carol@example.com', '3456 Oak Lane', 'Madison', 'USA', '34567', 'Creative graphic designer.'),
+('12345678904', 'securePass4', 'David Brown', 400, 'david@example.com', '4567 Pine Street', 'Jefferson', 'USA', '45678', 'Innovative marketing specialist.'),
+('12345678905', 'securePass5', 'Eva Green', 500, 'eva@example.com', '5678 Birch Road', 'Clinton', 'USA', '56789', 'Passionate digital artist.'),
+('12345678906', 'securePass6', 'Frank Wright', 600, 'frank@example.com', '6789 Cedar Blvd', 'Jackson', 'USA', '67890', 'Expert in cybersecurity.'),
+('12345678907', 'securePass7', 'Grace Hall', 700, 'grace@example.com', '7890 Dogwood Ave', 'Hamilton', 'USA', '78901', 'Skilled software developer.'),
+('12345678908', 'securePass8', 'Henry Adams', 800, 'henry@example.com', '8901 Elm St', 'Kingston', 'USA', '89012', 'Experienced business analyst.'),
+('12345678909', 'securePass9', 'Ivy Wilson', 900, 'ivy@example.com', '9012 Maple Road', 'Lexington', 'USA', '90123', 'Talented UI/UX designer.'),
+('12345678910', 'securePass10', 'Jake Martinez', 1000, 'jake@example.com', '1012 Oak Street', 'Monroe', 'USA', '01234', 'Dedicated team leader.'),
+('12345678911', 'securePass11', 'Luna Clark', 1100, 'luna@example.com', '1113 Pine Avenue', 'Naperville', 'USA', '12345', 'Creative content writer.'),
+('12345678912', 'securePass12', 'Miles Davis', 1200, 'miles@example.com', '1214 Birch Lane', 'Orlando', 'USA', '23456', 'Innovative product manager.'),
+('12345678913', 'securePass13', 'Nora Lewis', 1300, 'nora@example.com', '1315 Cedar Street', 'Phoenix', 'USA', '34567', 'Expert data analyst.'),
+('12345678914', 'securePass14', 'Oscar King', 1400, 'oscar@example.com', '1416 Dogwood Blvd', 'Queens', 'USA', '45678', 'Skilled network engineer.'),
+('12345678915', 'securePass15', 'Piper Scott', 1500, 'piper@example.com', '1517 Elm Road', 'Raleigh', 'USA', '56789', 'Passionate product designer.'),
+('15002597117', '123', 'Sayo Kravits', 1600, 'sayoKravits@example.com', '1618 Maple Ave', 'Stamford', 'USA', '67890', 'Enthusiastic operations manager.');
 
 
 Select * from `users`;

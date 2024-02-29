@@ -13,12 +13,36 @@ import (
 
 type CommonUserModel struct {
 	model.BaseModel
-	Phone    string `json:"phone" gorm:"column:phone;" binding:"required"`
-	Password string `json:"password" gorm:"column:password;" binding:"required"`
+	Phone      string `json:"phone" gorm:"column:phone;unique;not null" binding:"required"`
+	Password   string `json:"password" gorm:"column:password;not null" binding:"required"`
+	Name       string `json:"name" gorm:"column:name"`
+	Overage    int    `json:"overage" gorm:"column:overage;default:0"`
+	Email      string `json:"email" gorm:"column:email"`
+	Address    string `json:"address" gorm:"column:address"`
+	City       string `json:"city" gorm:"column:city"`
+	Country    string `json:"country" gorm:"column:country"`
+	PostalCode string `json:"postal_code" gorm:"column:postal_code"`
+	AboutMe    string `json:"about_me" gorm:"column:about_me"`
 }
 
 func (u *CommonUserModel) TableName() string {
 	return "users"
+}
+
+func (u *CommonUserModel) GetName() (string, error) {
+	res := &CommonUserModel{}
+	d := db.DB.
+		Table(u.TableName()).
+		Where("id = ? ", u.BaseModel.ID).First(res)
+	return res.Name, d.Error
+}
+
+func (u *CommonUserModel) Get() (*CommonUserModel, error) {
+	res := &CommonUserModel{}
+	d := db.DB.
+		Table(u.TableName()).
+		Where("id = ? ", u.BaseModel.ID).First(res)
+	return res, d.Error
 }
 
 func (u *CommonUserModel) Create() error {
@@ -31,6 +55,22 @@ func (u *CommonUserModel) Save() (err error) {
 	return db.DB.
 		Table(u.TableName()).
 		Save(u).Error
+}
+
+func (u *CommonUserModel) Update() (err error) {
+	// 使用map更新多个字段
+	return db.DB.
+		Model(u).
+		Where("id = ?", u.ID).
+		Updates(map[string]interface{}{
+			"password":    u.Password,
+			"email":       u.Email,
+			"name":        u.Name,
+			"phone":       u.Phone,
+			"address":     u.Address,
+			"about_me":    u.AboutMe,
+			"postal_code": u.PostalCode,
+		}).Error
 }
 
 func GetCommonUserByPhoneAndPassword(phone string, password string) (*CommonUserModel, error) {
