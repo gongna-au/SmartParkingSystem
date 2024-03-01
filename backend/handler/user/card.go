@@ -121,6 +121,44 @@ func UpdatePassword(c *gin.Context) {
 	response.Abort500(c, "更新失败")
 }
 
+func UpdateOverage(c *gin.Context) {
+	request := &requests.UpdateOverageRequest{}
+	// 2. 绑定
+	if err := c.Bind(request); err != nil {
+		response.Abort500(c, "绑定参数失败")
+		return
+	}
+	userID, _ := strconv.Atoi(request.UserID) // 从查询参数中获取用户ID
+	userModel := user.CommonUserModel{
+		BaseModel: model.BaseModel{ID: userID},
+	}
+	u, err := userModel.Get()
+	if err != nil || u == nil {
+		response.Abort500(c, "获取用户信息失败")
+		return
+	}
+	cardModel := user.BankCardsBound{
+		UserId:     userID,
+		CardNumber: request.CardNumber,
+	}
+	card, err := cardModel.GetCard()
+	if err != nil || card == nil {
+		response.Abort500(c, "获取绑定的卡失败")
+		return
+	}
+	if card.CardPassword != request.Password {
+		response.Abort500(c, "输入的银行卡密码错误")
+		return
+	}
+	u.Overage = u.Overage + request.RechargeAmount
+	err = u.Update()
+	if err != nil {
+		response.Abort500(c, "充值失败")
+		return
+	}
+	response.JSON(c, u.Overage) // 使用你的响应工具返回数据
+}
+
 func GetUser(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Query("userId")) // 从查询参数中获取用户ID
 	userModel := user.CommonUserModel{

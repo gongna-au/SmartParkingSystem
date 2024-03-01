@@ -24,3 +24,10 @@ type UpdatePasswordRequest struct {
 	OldPassword string `json:"old_password" binding:"required"` // 银行卡号
 	NewPassword string `json:"new_password" binding:"required"` // 银行卡号
 } //@name UpdatePasswordRequest
+
+type UpdateOverageRequest struct {
+	UserID         string `json:"user_id" binding:"required"`         // 用户ID
+	Password       string `json:"password" binding:"required"`        // 银行密码
+	CardNumber     string `json:"card_number" binding:"required"`     // 银行密码
+	RechargeAmount int    `json:"recharge_amount" binding:"required"` // 银行密码
+} //@name UpdateOverageRequest

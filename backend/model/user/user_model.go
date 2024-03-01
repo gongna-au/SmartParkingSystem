@@ -64,12 +64,14 @@ func (u *CommonUserModel) Update() (err error) {
 		Where("id = ?", u.ID).
 		Updates(map[string]interface{}{
 			"password":    u.Password,
-			"email":       u.Email,
 			"name":        u.Name,
-			"phone":       u.Phone,
+			"overage":     u.Overage,
+			"email":       u.Email,
 			"address":     u.Address,
-			"about_me":    u.AboutMe,
+			"city":        u.City,
+			"country":     u.Country,
 			"postal_code": u.PostalCode,
+			"about_me":    u.AboutMe,
 		}).Error
 }
 
@@ -180,6 +182,16 @@ func (c *BankCardsBound) Get() ([]string, error) {
 		boundCards = append(boundCards, card.CardNumber)
 	}
 	return boundCards, nil
+}
+
+func (c *BankCardsBound) GetCard() (*BankCardsBound, error) {
+	card := &BankCardsBound{}
+	// 假设 db 是 *gorm.DB 的已经初始化的实例
+	err := db.DB.Table(c.TableName()).Where("user_id = ? AND card_number = ? ", c.UserId, c.CardNumber).Find(&card).Error
+	if err != nil {
+		return card, err
+	}
+	return card, nil
 }
 
 func (c *BankCardsBound) JudgeBackCardBounded() error {
