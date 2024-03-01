@@ -16,6 +16,7 @@ type CommonUserModel struct {
 	Phone      string `json:"phone" gorm:"column:phone;unique;not null" binding:"required"`
 	Password   string `json:"password" gorm:"column:password;not null" binding:"required"`
 	Name       string `json:"name" gorm:"column:name"`
+	Expenses   int    `json:"expenses" gorm:"column:expenses;default:0"`
 	Overage    int    `json:"overage" gorm:"column:overage;default:0"`
 	Email      string `json:"email" gorm:"column:email"`
 	Address    string `json:"address" gorm:"column:address"`

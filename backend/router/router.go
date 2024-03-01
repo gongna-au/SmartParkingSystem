@@ -114,6 +114,7 @@ func RegisterAPIRoutes(g *gin.Engine) {
 		g6.GET("/profile", user.GetUser)
 		g6.POST("/profile/password", user.UpdatePassword)
 		g6.POST("/recharge", user.UpdateOverage)
+		g6.GET("/overage", user.GetOverage)
 	}
 
 }

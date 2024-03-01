@@ -159,6 +159,19 @@ func UpdateOverage(c *gin.Context) {
 	response.JSON(c, u.Overage) // 使用你的响应工具返回数据
 }
 
+func GetOverage(c *gin.Context) {
+	userID, _ := strconv.Atoi(c.Query("userId")) // 从查询参数中获取用户ID
+	userModel := user.CommonUserModel{
+		BaseModel: model.BaseModel{ID: userID},
+	}
+	user, err := userModel.Get()
+	if err != nil {
+		response.Error(c, err, "用户名错误")
+		return
+	}
+	response.JSON(c, user.Overage) // 使用你的响应工具返回数据
+}
+
 func GetUser(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Query("userId")) // 从查询参数中获取用户ID
 	userModel := user.CommonUserModel{

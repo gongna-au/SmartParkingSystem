@@ -10,6 +10,7 @@ CREATE TABLE `users` (
   `phone` varchar(50) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
+  `expenses` int(11) DEFAULT 0,
   `overage` int(11) DEFAULT 0,
   `email` varchar(255) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
