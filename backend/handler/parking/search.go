@@ -5,6 +5,7 @@ import (
 	"backend/model/requests"
 	"backend/model/response"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -66,6 +67,39 @@ func SearchReserveByUserID(c *gin.Context) {
 		return
 	}
 	response.JSON(c, reservations)
+}
+
+func AddReserve(c *gin.Context) {
+	request := requests.AddReserveRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		response.Abort500(c, "绑定失败")
+		return
+	}
+	const layout = "2006-01-02T15:04" // 使用这个常量作为解析的格式
+	start, err := time.Parse(layout, request.StartTime)
+	if err != nil {
+		response.Abort500(c, "解析起始时间失败")
+		return
+	}
+	end, err := time.Parse(layout, request.EndTime)
+	if err != nil {
+		response.Abort500(c, "解析结束时间失败")
+		return
+	}
+	userId, _ := strconv.Atoi(request.UserID) //
+	pr := parking.ParkingReservationModel{
+		UserID:        userId,
+		ParkingLotID:  request.ParkingLotId,
+		VehicleNumber: request.VehicleNumber,
+		StartTime:     start,
+		EndTime:       end,
+	}
+	err = pr.Add()
+	if err != nil {
+		response.Abort500(c, "预定失败")
+		return
+	}
+	response.JSON(c, "预定成功") // 使用你的响应工具返回数据
 }
 
 func CancelReserveByID(c *gin.Context) {

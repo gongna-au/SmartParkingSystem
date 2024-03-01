@@ -146,7 +146,7 @@ CREATE TABLE `parking_reservations` (
   `vehicle_number` VARCHAR(20) NOT NULL,
   `start_time` DATETIME NOT NULL,
   `end_time` DATETIME NOT NULL,
-  `status` ENUM('PENDING', 'CONFIRMED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+  `status`VARCHAR(20) DEFAULT 'PENDING',
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
   FOREIGN KEY (`parking_lot_id`) REFERENCES `parking_lots`(`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -184,6 +184,14 @@ func (pr *ParkingReservationModel) Get() (*ParkingReservationModel, error) {
 	return res, err
 }
 
+func (pr *ParkingReservationModel) Add() error {
+	// 使用GORM的Create方法新增记录
+	pr.StartTime = pr.StartTime.UTC() // 调整为UTC时区
+	pr.EndTime = pr.EndTime.UTC()
+	result := db.DB.Table(pr.TableName()).Create(pr)
+	return result.Error
+}
+
 func (pr *ParkingReservationModel) Update() error {
 	return db.DB.Table(pr.TableName()).
 		Model(pr).
