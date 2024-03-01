@@ -159,7 +159,12 @@ func UpdateOverage(c *gin.Context) {
 	response.JSON(c, u.Overage) // 使用你的响应工具返回数据
 }
 
-func GetOverage(c *gin.Context) {
+type UserResponse struct {
+	Overage  int `json:"overage"` // 假设Overage是float64类型
+	Expenses int `json:"expenses"`
+}
+
+func GetOverageAndExpenses(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Query("userId")) // 从查询参数中获取用户ID
 	userModel := user.CommonUserModel{
 		BaseModel: model.BaseModel{ID: userID},
@@ -169,7 +174,11 @@ func GetOverage(c *gin.Context) {
 		response.Error(c, err, "用户名错误")
 		return
 	}
-	response.JSON(c, user.Overage) // 使用你的响应工具返回数据
+
+	response.JSON(c, UserResponse{
+		Overage:  user.Overage,
+		Expenses: user.Expenses,
+	}) // 使用你的响应工具返回数据
 }
 
 func GetUser(c *gin.Context) {

@@ -169,13 +169,48 @@ type ParkingReservationModel struct {
 	VehicleNumber string    `json:"vehicle_number" gorm:"column:vehicle_number;" binding:"required"`
 	StartTime     time.Time `json:"start_time" gorm:"column:start_time;" binding:"required"`
 	EndTime       time.Time `json:"end_time" gorm:"column:end_time;" binding:"required"`
-	BankCardID    int       `json:"bank_card_id" gorm:"column:bank_card_id;" binding:"required"`     // 用户用于支付的银行卡ID
-	PaymentAmount float64   `json:"payment_amount" gorm:"column:payment_amount;" binding:"required"` // 支付的金额
-	// 可以根据需要添加更多字段，比如停车场名称等
+	Status        string    `json:"status" gorm:"column:status;" binding:"required"`
 }
 
 func (c *ParkingReservationModel) TableName() string {
-	return "bank_cards_bound"
+	return "parking_reservations"
+}
+
+func (pr *ParkingReservationModel) Get() (*ParkingReservationModel, error) {
+	res := &ParkingReservationModel{}
+	err := db.DB.Table(pr.TableName()).
+		Where("id = ?", pr.ID).
+		Scan(res).Error
+	return res, err
+}
+
+func (pr *ParkingReservationModel) Update() error {
+	return db.DB.Table(pr.TableName()).
+		Model(pr).
+		Where("id = ?", pr.ID).
+		Updates(map[string]interface{}{
+			"user_id":        pr.UserID,
+			"parking_lot_id": pr.ParkingLotID,
+			"vehicle_number": pr.VehicleNumber,
+			"start_time":     pr.StartTime,
+			"end_time":       pr.EndTime,
+			"status":         pr.Status,
+		}).Error
+}
+
+func (pr *ParkingReservationModel) GetByUserID() ([]ReservationResponse, error) {
+	var reservations []ReservationResponse
+	err := db.DB.Table(pr.TableName()).
+		Select("parking_reservations.*, parking_lots.name AS parking_lot_name, parking_lots.address AS parking_lot_address, parking_lots.spaces AS parking_lot_spaces, parking_lots.charge AS parking_lot_charge").
+		Joins("JOIN parking_lots ON parking_lots.id = parking_reservations.parking_lot_id").
+		Where("parking_reservations.user_id = ?", pr.UserID).
+		Scan(&reservations).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return reservations, nil
 }
 
 // 假设的ParkingReservationModel，现在包括了所有需要的信息
@@ -186,28 +221,9 @@ type ReservationResponse struct {
 	ParkingLotAddress string `json:"parking_lot_address"`
 	ParkingLotSpaces  int    `json:"parking_lot_spaces"`
 	ParkingLotCharge  string `json:"parking_lot_charge"`
-
-	// 来自bank_cards表
-	BankCardNumber string `json:"bank_card_number"`
 }
 
 // SearchParkingReserveByUserID 根据用户ID查询停车预约记录，包括停车场信息和支付银行卡信息
-func SearchParkingReserveByUserID(userID int) ([]ReservationResponse, error) {
-	var reservations []ReservationResponse
-
-	err := db.DB.Table("parking_reservations").
-		Select("parking_reservations.*, parking_lots.name AS parking_lot_name, parking_lots.address AS parking_lot_address, parking_lots.spaces AS parking_lot_spaces, parking_lots.charge AS parking_lot_charge, bank_cards_bound.card_number AS bank_card_number").
-		Joins("JOIN parking_lots ON parking_lots.id = parking_reservations.parking_lot_id").
-		Joins("JOIN bank_cards_bound ON bank_cards_bound.id = parking_reservations.bank_card_id").
-		Where("parking_reservations.user_id = ?", userID).
-		Scan(&reservations).Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	return reservations, nil
-}
 
 func CancelReserveByReserveId(reserveId int) error {
 	// 查找并删除指定ID的预定记录

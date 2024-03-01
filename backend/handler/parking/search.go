@@ -57,12 +57,15 @@ func SearchHistoryByUserID(c *gin.Context) {
 
 func SearchReserveByUserID(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Query("userId")) // 从查询参数中获取用户ID
-	historyRecords, err := parking.SearchParkingReserveByUserID(userID)
+	pr := parking.ParkingReservationModel{
+		UserID: userID,
+	}
+	reservations, err := pr.GetByUserID()
 	if err != nil {
 		response.Error(c, err, "搜索预定的停车历史失败")
 		return
 	}
-	response.JSON(c, historyRecords) // 使用你的响应工具返回数据
+	response.JSON(c, reservations)
 }
 
 func CancelReserveByID(c *gin.Context) {

@@ -40,6 +40,10 @@ INSERT INTO `users` (`phone`, `password`, `name`, `overage`, `email`, `address`,
 ('12345678915', 'securePass15', 'Piper Scott', 1500, 'piper@example.com', '1517 Elm Road', 'Raleigh', 'USA', '56789', 'Passionate product designer.'),
 ('15002597117', '123', 'Sayo Kravits', 1600, 'sayoKravits@example.com', '1618 Maple Ave', 'Stamford', 'USA', '67890', 'Enthusiastic operations manager.');
 
+UPDATE `users`
+SET `expenses` = 1300
+WHERE `id` = 16;
+
 
 Select * from `users`;
 
@@ -142,49 +146,31 @@ CREATE TABLE `parking_reservations` (
   `vehicle_number` VARCHAR(20) NOT NULL,
   `start_time` DATETIME NOT NULL,
   `end_time` DATETIME NOT NULL,
-  `bank_card_id` INT NOT NULL,
-  `payment_amount` DECIMAL(10, 2) NOT NULL,
+  `status` ENUM('PENDING', 'CONFIRMED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
-  FOREIGN KEY (`parking_lot_id`) REFERENCES `parking_lots`(`id`),
-  FOREIGN KEY (`bank_card_id`) REFERENCES `bank_cards_bound`(`id`)
+  FOREIGN KEY (`parking_lot_id`) REFERENCES `parking_lots`(`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
-INSERT INTO `parking_reservations` (`user_id`, `parking_lot_id`, `vehicle_number`,`start_time`, `end_time`, `bank_card_id`, `payment_amount`) VALUES
-(1, 1, 'ASD430','2023-03-01 08:00:00', '2023-03-01 12:00:00', 1, 20.00),
-(2, 2, 'ASD135','2023-03-02 09:00:00', '2023-03-02 11:00:00', 2, 15.00),
-(3, 3, 'ASD235','2023-03-03 10:00:00', '2023-03-03 14:00:00', 3, 25.00),
-(1, 4, 'ASD335','2023-03-04 08:30:00', '2023-03-04 10:30:00', 4, 10.00),
-(2, 5, 'ASD435','2023-03-05 09:30:00', '2023-03-05 13:30:00', 5, 18.00),
-(3, 1, 'ASD435','2023-03-06 10:30:00', '2023-03-06 12:30:00', 6, 12.00),
-(1, 2, 'ASD635','2023-03-07 11:00:00', '2023-03-07 15:00:00', 1, 22.00),
-(2, 3, 'ASD735','2023-03-08 12:00:00', '2023-03-08 16:00:00', 2, 24.00),
-(3, 4, 'ASD835','2023-03-09 13:00:00', '2023-03-09 17:00:00', 3, 30.00),
-(14, 3, 'ASD935','2023-03-05 12:00:00', '2023-03-05 16:00:00', 2, 24.00),
-(14, 3, 'ASD835','2023-03-06 12:00:00', '2023-03-06 16:00:00', 2, 24.00),
-(14, 3, 'ASD735','2023-03-08 12:00:00', '2023-03-08 16:00:00', 2, 24.00),
-(14, 4, 'ADD435','2023-03-09 13:00:00', '2023-03-09 17:00:00', 3, 30.00),
-(16, 3, 'AQD435','2023-03-10 12:00:00', '2023-03-11 16:00:00', 2, 24.00),
-(16, 3, 'AAD435','2023-03-11 12:00:00', '2023-03-12 16:00:00', 2, 24.00),
-(16, 4, 'ARD435','2023-03-12 13:00:00', '2023-03-13 17:00:00', 3, 30.00),
-(1, 5, 'AED435','2023-03-12 14:00:00', '2023-03-13 18:00:00', 4, 16.00);
-
-
-SELECT 
-  DATE(start_time) AS date, 
-  SUM(payment_amount) AS TotalRevenue, 
-  COUNT(*) AS TotalParkings, 
-  AVG(TIMESTAMPDIFF(MINUTE, start_time, end_time)) / 60 AS AverageParkingDuration
-FROM 
-  parking_reservations
-WHERE 
-  end_time > start_time
-GROUP BY 
-  DATE(start_time)
-ORDER BY 
-  date;
-
+INSERT INTO `parking_reservations` (`user_id`, `parking_lot_id`, `vehicle_number`,`start_time`, `end_time`) VALUES
+(1, 1, 'ASD430','2023-03-01 08:00:00', '2023-03-01 12:00:00'),
+(2, 2, 'ASD135','2023-03-02 09:00:00', '2023-03-02 11:00:00'),
+(3, 3, 'ASD235','2023-03-03 10:00:00', '2023-03-03 14:00:00'),
+(1, 4, 'ASD335','2023-03-04 08:30:00', '2023-03-04 10:30:00'),
+(2, 5, 'ASD435','2023-03-05 09:30:00', '2023-03-05 13:30:00'),
+(3, 1, 'ASD435','2023-03-06 10:30:00', '2023-03-06 12:30:00'),
+(1, 2, 'ASD635','2023-03-07 11:00:00', '2023-03-07 15:00:00'),
+(2, 3, 'ASD735','2023-03-08 12:00:00', '2023-03-08 16:00:00'),
+(3, 4, 'ASD835','2023-03-09 13:00:00', '2023-03-09 17:00:00'),
+(14, 3, 'ASD935','2023-03-05 12:00:00', '2023-03-05 16:00:00'),
+(14, 3, 'ASD835','2023-03-06 12:00:00', '2023-03-06 16:00:00'),
+(14, 3, 'ASD735','2023-03-08 12:00:00', '2023-03-08 16:00:00'),
+(14, 4, 'ADD435','2023-03-09 13:00:00', '2023-03-09 17:00:00'),
+(16, 3, 'AQD435','2023-03-10 12:00:00', '2023-03-11 16:00:00'),
+(16, 3, 'AAD435','2023-03-11 12:00:00', '2023-03-12 16:00:00'),
+(16, 4, 'ARD435','2023-03-12 13:00:00', '2023-03-13 17:00:00'),
+(1, 5, 'AED435','2023-03-12 14:00:00', '2023-03-13 18:00:00');
 
 
 CREATE TABLE completed_parking_transactions (
