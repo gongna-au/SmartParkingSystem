@@ -169,7 +169,7 @@ type ParkingReservationModel struct {
 	VehicleNumber string    `json:"vehicle_number" gorm:"column:vehicle_number;" binding:"required"`
 	StartTime     time.Time `json:"start_time" gorm:"column:start_time;" binding:"required"`
 	EndTime       time.Time `json:"end_time" gorm:"column:end_time;" binding:"required"`
-	Status        string    `json:"status" gorm:"column:status;" binding:"required"`
+	Status        string    `json:"status" gorm:"column:status;default:PENDING" binding:"required"`
 }
 
 func (c *ParkingReservationModel) TableName() string {

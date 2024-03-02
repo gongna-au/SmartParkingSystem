@@ -11,5 +11,5 @@ type AddReserveRequest struct {
 	StartTime     string `json:"start_time" binding:"required"`     // 银行密码
 	EndTime       string `json:"end_time" binding:"required"`       // 银行密码
 	VehicleNumber string `json:"vehicle_number" binding:"required"` // 银行密码
-	Status        string `json:"status" binding:"required"`         // 银行密码
+	Status        string `json:"status" `                           // 银行密码
 } //@name AddReserveRequest
