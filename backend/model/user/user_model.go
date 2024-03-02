@@ -168,6 +168,13 @@ func (c *BankCardsBound) Create() error {
 		Create(c).Error
 }
 
+func (c *BankCardsBound) Delete() error {
+	return db.DB.
+		Table(c.TableName()).
+		Where("user_id = ? AND card_number= ? ", c.UserId, c.CardNumber).
+		Delete(c).Error
+}
+
 func (c *BankCardsBound) Get() ([]string, error) {
 	var cards []BankCardsBound
 	var boundCards []string
@@ -185,14 +192,21 @@ func (c *BankCardsBound) Get() ([]string, error) {
 	return boundCards, nil
 }
 
-func (c *BankCardsBound) GetCard() (*BankCardsBound, error) {
+func (c *BankCardsBound) GetCardByUserIdAndNumber() (*BankCardsBound, error) {
 	card := &BankCardsBound{}
 	// 假设 db 是 *gorm.DB 的已经初始化的实例
 	err := db.DB.Table(c.TableName()).Where("user_id = ? AND card_number = ? ", c.UserId, c.CardNumber).Find(&card).Error
-	if err != nil {
-		return card, err
+	return card, err
+}
+
+func (c *BankCardsBound) IsBind() (bool, error) {
+	card := &BankCardsBound{}
+	// 假设 db 是 *gorm.DB 的已经初始化的实例
+	err := db.DB.Table(c.TableName()).Where("user_id = ? AND card_number = ? ", c.UserId, c.CardNumber).Find(&card).Error
+	if card.ID > 0 {
+		return false, fmt.Errorf("该卡已经被绑定")
 	}
-	return card, nil
+	return false, err
 }
 
 func (c *BankCardsBound) JudgeBackCardBounded() error {

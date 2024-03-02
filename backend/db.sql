@@ -83,23 +83,23 @@ CREATE TABLE `parking_lots` (
   `address` varchar(255) NOT NULL,
   `imageUrl` VARCHAR(255) NOT NULL,
   `spaces` int(11) NOT NULL,
-  `charge` varchar(50) NOT NULL,
+  `charge` DECIMAL(10, 2) NOT NULL, 
   `latitude` decimal(10, 8) NOT NULL,
   `longitude` decimal(11, 8) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `parking_lots` (`name`, `address`, `spaces`, `charge`, `latitude`, `longitude`, `imageUrl`) VALUES 
-('Pike Place Market Parking Garage', '1531 Western Ave, Seattle, WA 98101 US', 90, '$8/h', 47.609722, -122.342222, 'https://cdn.pixabay.com/photo/2014/04/02/10/45/parking-304465_1280.png'),
-('South Place Market Parking Garage', '3231 Western Ave, Seattle, WA 98198 US', 100, '$7/h', 47.609722, -122.332222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
-('West Place Market Parking Garage', '1356 Western Ave, Seattle, WA 12101 US', 80, '$6/h', 47.609722, -122.322222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
-('East Place Market Parking Garage', '2356 Eastern Ave, Seattle, WA 98102 US', 85, '$9/h', 47.609722, -122.312222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
-('North Place Market Parking Garage', '4356 Northern Ave, Seattle, WA 98103 US', 75, '$5/h', 47.609722, -122.302222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
-('Central Place Market Parking Garage', '536 Central Ave, Seattle, WA 98104 US', 95, '$10/h', 47.609722, -122.292222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
-('Harbor Place Market Parking Garage', '636 Harbor Ave, Seattle, WA 98105 US', 85, '$4/h', 47.609722, -122.282222, 'https://cdn.pixabay.com/photo/2016/03/22/00/45/multi-storey-car-park-1271917_1280.jpg'),
-('River Place Market Parking Garage', '736 River Ave, Seattle, WA 98106 US', 65, '$3/h', 47.609722, -122.272222, 'https://cdn.pixabay.com/photo/2016/03/22/00/45/multi-storey-car-park-1271917_1280.jpg'),
-('Ocean Place Market Parking Garage', '836 Ocean Ave, Seattle, WA 98107 US', 55, '$2/h', 47.609722, -122.262222, 'https://cdn.pixabay.com/photo/2016/03/22/00/45/multi-storey-car-park-1271917_1280.jpg'),
-('Mountain Place Market Parking Garage', '936 Mountain Ave, Seattle, WA 98108 US', 45, '$1/h', 47.609722, -122.252222, 'https://cdn.pixabay.com/photo/2016/03/22/00/45/multi-storey-car-park-1271917_1280.jpg');
+('Pike Place Market Parking Garage', '1531 Western Ave, Seattle, WA 98101 US', 90,  8.00, 47.609722, -122.342222, 'https://cdn.pixabay.com/photo/2014/04/02/10/45/parking-304465_1280.png'),
+('South Place Market Parking Garage', '3231 Western Ave, Seattle, WA 98198 US', 100,  8.00, 47.609722, -122.332222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
+('West Place Market Parking Garage', '1356 Western Ave, Seattle, WA 12101 US', 80,  8.00, 47.609722, -122.322222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
+('East Place Market Parking Garage', '2356 Eastern Ave, Seattle, WA 98102 US', 85,  8.00, 47.609722, -122.312222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
+('North Place Market Parking Garage', '4356 Northern Ave, Seattle, WA 98103 US', 75,  8.00, 47.609722, -122.302222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
+('Central Place Market Parking Garage', '536 Central Ave, Seattle, WA 98104 US', 95,  8.00, 47.609722, -122.292222, 'https://cdn.pixabay.com/photo/2021/07/02/09/39/cars-6381364_1280.jpg'),
+('Harbor Place Market Parking Garage', '636 Harbor Ave, Seattle, WA 98105 US', 85,  8.00, 47.609722, -122.282222, 'https://cdn.pixabay.com/photo/2016/03/22/00/45/multi-storey-car-park-1271917_1280.jpg'),
+('River Place Market Parking Garage', '736 River Ave, Seattle, WA 98106 US', 65,  8.00, 47.609722, -122.272222, 'https://cdn.pixabay.com/photo/2016/03/22/00/45/multi-storey-car-park-1271917_1280.jpg'),
+('Ocean Place Market Parking Garage', '836 Ocean Ave, Seattle, WA 98107 US', 55,  8.00, 47.609722, -122.262222, 'https://cdn.pixabay.com/photo/2016/03/22/00/45/multi-storey-car-park-1271917_1280.jpg'),
+('Mountain Place Market Parking Garage', '936 Mountain Ave, Seattle, WA 98108 US', 45,  8.00, 47.609722, -122.252222, 'https://cdn.pixabay.com/photo/2016/03/22/00/45/multi-storey-car-park-1271917_1280.jpg');
 
 
 -- 假设用户当前的经纬度为(latitude, longitude)
@@ -120,22 +120,30 @@ CREATE TABLE parking_history (
     user_id INT NOT NULL,
     parking_lot_id INT NOT NULL,
     vehicle_number VARCHAR(20) NOT NULL,
+    payment_amount  DECIMAL(10, 2) NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL
 );
 
-INSERT INTO parking_history (user_id, parking_lot_id, start_time, end_time, vehicle_number) VALUES
-(1, 1, '2024-02-20 08:00:00', '2024-02-20 10:30:00', 'ABC123'),
-(2, 1, '2024-02-20 09:00:00', '2024-02-20 11:15:00', 'XYZ456'),
-(1, 2, '2024-02-21 08:15:00', '2024-02-21 10:45:00', 'DEF789'),
-(14, 4, '2024-02-21 07:45:00', '2024-02-21 08:30:00', 'GHI012'),
-(14, 8, '2024-02-22 07:45:00', '2024-02-22 08:30:00', 'GHI012'),
-(14, 4, '2024-02-23 07:45:00', '2024-02-23 08:30:00', 'GHI012'),
-(14, 8, '2024-02-24 07:45:00', '2024-02-24 08:30:00', 'GHI012'),
-(14, 4, '2024-02-25 07:45:00', '2024-02-25 08:30:00', 'GHI012'),
-(16, 8, '2024-02-24 07:45:00', '2024-02-24 08:30:00', 'EFI012'),
-(16, 4, '2024-02-25 07:45:00', '2024-02-25 08:30:00', 'YRI012'),
-(14, 8, '2024-02-26 07:45:00', '2024-02-27 08:30:00', 'GHI012');
+INSERT INTO parking_history (user_id, parking_lot_id, start_time, end_time, vehicle_number,payment_amount) VALUES
+(16, 8, '2024-02-24 07:45:00', '2024-02-24 08:30:00', 'EFI012',34.00),
+(16, 4, '2024-02-25 07:45:00', '2024-02-26 08:30:00', 'YRI012',34.00),
+(16, 8, '2024-02-26 07:45:00', '2024-02-27 08:30:00', 'EFI012',34.00),
+(16, 4, '2024-02-27 07:45:00', '2024-02-28 08:30:00', 'YRI012',34.00),
+(16, 8, '2024-02-28 07:45:00', '2024-02-29 08:30:00', 'EFI012',34.00),
+(16, 4, '2024-03-01 07:45:00', '2024-03-02 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-03 07:45:00', '2024-03-04 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-05 07:45:00', '2024-03-06 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-07 07:45:00', '2024-03-08 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-09 07:45:00', '2024-03-10 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-11 07:45:00', '2024-03-12 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-13 07:45:00', '2024-03-14 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-15 07:45:00', '2024-03-16 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-17 07:45:00', '2024-03-18 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-19 07:45:00', '2024-03-20 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-03-21 07:45:00', '2024-03-22 07:45:00', 'YRI012',34.00),
+(16, 4, '2024-02-23 07:45:00', '2024-02-24 07:45:00', 'YRI012',34.00);
+
 
 
 

@@ -19,6 +19,11 @@ type AddNewCardRequest struct {
 	ExpiryDate   string `json:"expiry_date" binding:"required"`   // 到期日期，格式为"YYYY-MM-DD"
 } //@name AddNewCardRequest
 
+type UnbindCardRequest struct {
+	UserID     string `json:"user_id" binding:"required"`     // 用户ID
+	CardNumber string `json:"card_number" binding:"required"` // 银行卡号
+}
+
 type UpdatePasswordRequest struct {
 	UserID      string `json:"user_id" binding:"required"`      // 用户ID
 	OldPassword string `json:"old_password" binding:"required"` // 银行卡号

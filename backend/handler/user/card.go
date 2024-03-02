@@ -50,18 +50,46 @@ func AddNewCard(c *gin.Context) {
 		response.BadRequest(c, fmt.Errorf("请求的参数不合法"))
 		return
 	}
-	err := cardModel.Create()
+	isBind, err := cardModel.IsBind()
+	if isBind == true || err != nil {
+		response.Abort500(c, "已经被绑定")
+		return
+	}
+	err = cardModel.Create()
 	if err != nil {
 		response.Abort500(c, err.Error())
 		return
 	}
 	if cardModel.ID > 0 {
-		response.JSON(c, "绑定银行卡成功")
+		response.JSON(c, cardModel.CardNumber)
 	} else {
 		response.Abort500(c, "绑定银行卡失败，请稍后尝试~")
 		return
 	}
 
+}
+
+func UnbindCard(c *gin.Context) {
+	// 1. 验证表单
+	request := requests.UnbindCardRequest{}
+	// 2. 绑定
+	if err := c.Bind(&request); err != nil {
+		response.Abort500(c, "绑定参数失败")
+		return
+	}
+	userID, _ := strconv.Atoi(request.UserID) // 从查询参数中获取用户ID
+
+	// 2. 验证，创建数据
+	cardModel := user.BankCardsBound{
+		UserId:     userID,
+		CardNumber: request.CardNumber,
+	}
+	err := cardModel.Delete()
+	if err != nil {
+		response.Abort500(c, "解绑银行卡失败，请稍后尝试~")
+		return
+	}
+	response.JSON(c, cardModel.CardNumber) // 使用你的响应工具返回数据
 }
 
 func GetBoundedCard(c *gin.Context) {
@@ -141,7 +169,7 @@ func UpdateOverage(c *gin.Context) {
 		UserId:     userID,
 		CardNumber: request.CardNumber,
 	}
-	card, err := cardModel.GetCard()
+	card, err := cardModel.GetCardByUserIdAndNumber()
 	if err != nil || card == nil {
 		response.Abort500(c, "获取绑定的卡失败")
 		return

@@ -9,14 +9,13 @@ import (
 
 type ParkingLotModel struct {
 	model.BaseModel
-
 	Name      string  `json:"name" gorm:"column:name;" binding:"required"`
 	Address   string  `json:"address" gorm:"column:address;" binding:"required"`
 	ImageUrl  string  `json:"imageUrl" gorm:"column:imageUrl;" binding:"required"`
 	Spaces    int     `json:"spaces" gorm:"column:spaces;" binding:"required"`
-	Charge    string  `json:"charge" gorm:"column:charge;" binding:"required"`
-	Latitude  float64 `json:"latitude" gorm:"column:latitude;" binding:"required"`
-	Longitude float64 `json:"longitude" gorm:"column:longitude;" binding:"required"`
+	Charge    float64 `json:"charge" gorm:"type:decimal(10,2);not null" binding:"required"`
+	Latitude  float64 `json:"latitude" gorm:"type:decimal(10,8);not null" binding:"required"`
+	Longitude float64 `json:"longitude" gorm:"type:decimal(11,8);not null" binding:"required"`
 }
 
 func (u *ParkingLotModel) TableName() string {
@@ -111,6 +110,11 @@ func FindNearbyParkingLots(userLat, userLong float64) ([]ParkingLotWithDistance,
 	return parkingLots, nil
 }
 
+// 定义一个结构体来接收查询结果
+func (ParkingHistoryModel) TableName() string {
+	return "parking_history"
+}
+
 type ParkingHistoryModel struct {
 	ID              int       `json:"id" gorm:"column:id;" binding:"required" `
 	UserID          int       `json:"user_id" gorm:"column:user_id;" binding:"required"`
@@ -119,39 +123,46 @@ type ParkingHistoryModel struct {
 	ParkingDuration string    `json:"parking_duration"` // 这是一个计算字段，不直接存储在数据库中
 	StartTime       time.Time `json:"start_time" gorm:"column:start_time;" binding:"required"`
 	EndTime         time.Time `json:"end_time" gorm:"column:end_time;" binding:"required" `
+	PaymentAmount   float64   `json:"payment_amount" gorm:"type:decimal(10,2);" binding:"required"`
 }
 
-// 定义一个结构体来接收查询结果
-type ParkingHistoryWithLots struct {
-	ParkingLotModel
-	ParkingHistoryModel
+type ParkingHistoryWithLot struct {
+	ParkingHistoryID int       `gorm:"column:id"`
+	UserID           int       `gorm:"column:user_id"`
+	VehicleNumber    string    `gorm:"column:vehicle_number"`
+	StartTime        time.Time `gorm:"column:start_time"`
+	EndTime          time.Time `gorm:"column:end_time"`
+	ParkingLotName   string    `gorm:"column:name"`
+	Address          string    `gorm:"column:address"`
+	PaymentAmount    float64   `gorm:"column:payment_amount"` // 支付金额
+	Duration         string
 }
 
-func (ParkingHistoryModel) TableName() string {
-	return "parking_history"
-}
+func SearchParkingHistoryByUserID(userID int) ([]ParkingHistoryWithLot, error) {
+	var results []ParkingHistoryWithLot
+	err := db.DB.Table("parking_history").
+		Select("parking_history.id, parking_history.user_id, parking_history.vehicle_number, parking_history.start_time, parking_history.end_time, parking_history.payment_amount,parking_lots.name, parking_lots.address").
+		Joins("join parking_lots on parking_lots.id = parking_history.parking_lot_id").
+		Where("parking_history.user_id = ?", userID). // 示例：针对特定 user_id 进行查询
+		Scan(&results).Error
 
-func SearchParkingHistoryByUserID(userID int) ([]ParkingHistoryWithLots, error) {
-	var historyRecords []ParkingHistoryWithLots
-	err := db.DB.
-		Table("parking_history").
-		Select("parking_history.*, parking_lots.name as LotName, parking_lots.address as LotAddress, parking_lots.imageUrl as LotImageUrl").
-		Joins("left join parking_lots on parking_lots.id = parking_history.parking_lot_id").
-		Where("parking_history.user_id = ?", userID).
-		Scan(&historyRecords).Error
-
-	if err != nil {
-		return nil, err
+	for i, _ := range results {
+		duration := results[i].EndTime.Sub(results[i].StartTime)
+		// 打印结果
+		results[i].Duration = formatDuration(duration)
 	}
+	return results, err
 
-	// 遍历每条记录，计算停车持续时间
-	for i, record := range historyRecords {
-		duration := record.EndTime.Sub(record.StartTime)
-		// 格式化持续时间，例如: "2h 15m"
-		historyRecords[i].ParkingDuration = fmtDuration(duration)
-	}
+}
 
-	return historyRecords, nil
+func formatDuration(duration time.Duration) string {
+	totalSeconds := int(duration.Seconds())
+	days := totalSeconds / (24 * 3600)
+	hours := (totalSeconds % (24 * 3600)) / 3600
+	minutes := (totalSeconds % 3600) / 60
+	seconds := totalSeconds % 60
+
+	return fmt.Sprintf("%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds)
 }
 
 // fmtDuration 格式化时间间隔为人类可读的形式
