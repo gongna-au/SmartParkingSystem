@@ -99,11 +99,13 @@ func RegisterAPIRoutes(g *gin.Engine) {
 	}
 	g5 := g.Group("/api/v1/parking")
 	{
+
 		g5.POST("/search", parking.SearchParkingLotsByLocation)
 		g5.GET("/history", parking.SearchHistoryByUserID)
 		g5.GET("/reserve", parking.SearchReserveByUserID)
 		g5.POST("/reservation", parking.AddReserve)
 		g5.GET("/cancel", parking.CancelReserveByID)
+		g5.GET("/sales", parking.GetSalesByDate)
 	}
 
 	// http://localhost:8083/api/parking/search

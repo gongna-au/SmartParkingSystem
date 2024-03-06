@@ -115,7 +115,7 @@ SELECT *,
 FROM `parking_lots`
 ORDER BY distance ASC;
 
-CREATE TABLE parking_history (
+CREATE TABLE `parking_history` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     parking_lot_id INT NOT NULL,

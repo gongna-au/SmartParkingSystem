@@ -102,7 +102,6 @@ func GetBoundedCard(c *gin.Context) {
 		response.Error(c, err, "获取绑定的银行卡失败")
 		return
 	}
-
 	response.JSON(c, boundedCards) // 使用你的响应工具返回数据
 }
 

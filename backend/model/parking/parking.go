@@ -126,6 +126,52 @@ type ParkingHistoryModel struct {
 	PaymentAmount   float64   `json:"payment_amount" gorm:"type:decimal(10,2);" binding:"required"`
 }
 
+type SalesByDate struct {
+	TotalRevenue       float64
+	Date               string
+	TotalParkings      int
+	MinParkingDuration time.Duration
+	MaxParkingDuration time.Duration
+	MinDuration        string
+	MaxDuration        string
+}
+
+func (ph *ParkingHistoryModel) GetSales(endTime string) (SalesByDate, error) {
+	var res []ParkingHistoryModel
+	err := db.DB.Table(ph.TableName()).
+		Where("DATE(end_time) = ?", endTime).
+		Scan(&res).Error
+	var s SalesByDate
+	s.Date = endTime
+	var minDuration, maxDuration time.Duration = time.Hour * 24, 0
+	s.TotalParkings = len(res)
+	for _, v := range res {
+		s.TotalRevenue = s.TotalRevenue + v.PaymentAmount
+		// 计算当前条目的停车时长
+		parkingDuration := v.EndTime.Sub(v.StartTime)
+
+		// 更新最小和最大停车时长
+		if parkingDuration < minDuration {
+			minDuration = parkingDuration
+		}
+		if parkingDuration > maxDuration {
+			maxDuration = parkingDuration
+		}
+	}
+	if s.TotalParkings > 0 {
+		s.MinParkingDuration = minDuration
+		s.MaxParkingDuration = maxDuration
+	} else {
+		// 如果没有停车记录，可能需要设置一个默认值或保持为零值
+		s.MinParkingDuration = 0
+		s.MaxParkingDuration = 0
+	}
+
+	s.MinDuration = formatDuration(s.MinParkingDuration)
+	s.MaxDuration = formatDuration(s.MaxParkingDuration)
+	return s, err
+}
+
 type ParkingHistoryWithLot struct {
 	ParkingHistoryID int       `gorm:"column:id"`
 	UserID           int       `gorm:"column:user_id"`

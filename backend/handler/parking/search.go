@@ -106,6 +106,15 @@ func parserTime(timeString string) (time.Time, error) {
 	}
 	return parsedTime, nil
 }
+func parserDayTime(timeString string) (time.Time, error) {
+	layout := "2006-01-02" // 仅包含年月日 // 更新时间
+	// 使用time.Parse转换字符串为time.Time
+	parsedTime, err := time.Parse(layout, timeString)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return parsedTime, nil
+}
 
 func CancelReserveByID(c *gin.Context) {
 	reserveID, _ := strconv.Atoi(c.Query("reserveId")) // 从查询参数中获取用户ID
@@ -116,4 +125,15 @@ func CancelReserveByID(c *gin.Context) {
 	}
 	response.JSON(c, "取消预定成功") // 使用你的响应工具返回数据
 
+}
+
+func GetSalesByDate(c *gin.Context) {
+	endTime := c.Query("endTime") // 从查询参数中获取用户ID
+	pm := parking.ParkingHistoryModel{}
+	res, err := pm.GetSales(endTime)
+	if err != nil {
+		response.Abort500(c, "获取收入错误")
+		return
+	}
+	response.JSON(c, res) // 使用你的响应工具返回数据
 }
